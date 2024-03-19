@@ -36,6 +36,12 @@ class PlayList {
      *  Otherwise, appends the track and returns true. */
     public boolean add(Track track) {
         //// replace the following statement with your code
+        if (size == maxSize) {
+            return false;
+        }
+        tracks[size] = track;
+        this.size++;
+
         return true;
     }
 
@@ -43,24 +49,41 @@ class PlayList {
     //// For an efficient implementation, use StringBuilder.
     public String toString() {
         //// replace the following statement with your code
-        return "";
+        String finalString = "\n";
+        for (int i = 0; i < this.size; i++) {
+            finalString += tracks[i].toString();
+            finalString += "\n";
+        }
+        return finalString;
     }
 
     /** Removes the last track from this list. If the list is empty, does nothing. */
      public void removeLast() {
         //// replace this comment with your code
+        tracks[this.size - 1] = null;
+        this.size-- ;
+        
     }
     
     /** Returns the total duration (in seconds) of all the tracks in this list.*/
     public int totalDuration() {
         //// replace the following statement with your code
-        return 0;
+        int totalDuration = 0;
+        for (int i = 0; i < this.size; i++){
+            totalDuration += tracks[i].getDuration();
+        }
+        return totalDuration;
     }
 
     /** Returns the index of the track with the given title in this list.
      *  If such a track is not found, returns -1. */
     public int indexOf(String title) {
         //// replace the following statement with your code
+        for (int i = 0; i < this.size; i++){
+            if (title.equals(tracks[i].getTitle())){
+                return i;
+            }
+        }
         return -1;
     }
 
@@ -72,6 +95,17 @@ class PlayList {
      *  returns true. */
     public boolean add(int i, Track track) {
         //// replace the following statement with your code
+        if (i >= 0 && i <= this.size) {
+            if (this.size == maxSize) {
+                return false;
+            }
+            for (int j = this.size; j > i; j--) {
+                tracks[j] = tracks[j - 1];
+            }
+            tracks[i] = track;
+            this.size++;
+            return true;
+        }
         return false;
     }
      
@@ -80,6 +114,13 @@ class PlayList {
      *  does nothing and returns -1. */
     public void remove(int i) {
         //// replace this comment with your code
+        if (i < 0 || i >= this.size) {
+            return ;
+        }
+        for (int j = i; j < this.size; j++) {
+            tracks[j] = tracks[j + 1];
+        }
+        this.size--;
     }
 
     /** Removes the first track that has the given title from this list.
@@ -87,11 +128,20 @@ class PlayList {
      *  is negative or too big for this list, does nothing. */
     public void remove(String title) {
         //// replace this comment with your code
+        for (int i = 0; i < this.size; i++){
+            if (title.equals(tracks[i].getTitle())){
+                this.remove(i);
+            }
+        }
+        this.size--;
     }
 
     /** Removes the first track from this list. If the list is empty, does nothing. */
     public void removeFirst() {
         //// replace this comment with your code
+        if(this.size > 0){
+            this.remove(0);
+        }
     }
     
     /** Adds all the tracks in the other list to the end of this list. 
@@ -99,6 +149,13 @@ class PlayList {
     //// An elegant and terribly inefficient implementation.
      public void add(PlayList other) {
         //// replace this comment with your code
+        if (other.size + this.size > this.maxSize) {
+            return;
+        }
+        for (int i = 0; i < other.size; i++) {
+            this.add(other.getTrack(i));
+        }
+        
     }
 
     /** Returns the index in this list of the track that has the shortest duration,
@@ -109,7 +166,16 @@ class PlayList {
      */
     private int minIndex(int start) {
         //// replace the following statement with your code
-        return 0;
+        if (start > 0 || start < this.size){
+            return -1;
+        }
+        Track minTrack = this.tracks[start];
+        for (int i = start + 1; i < this.size; i++) {
+            if (this.tracks[i].getDuration() < minTrack.getDuration()) {
+                minTrack = this.tracks[i];
+            }
+        }
+        return this.indexOf(minTrack.getTitle());
     }
 
     /** Returns the title of the shortest track in this list. 
@@ -126,5 +192,15 @@ class PlayList {
         // Uses the selection sort algorithm,  
         // calling the minIndex method in each iteration.
         //// replace this statement with your code
+        Track temp;
+        int minLocation;
+        for (int i = 0; i < this.size; i++) {
+            for (int j = i; j < this.size; j++) {
+                temp = this.tracks[j];
+                minLocation = this.minIndex(j);
+                this.tracks[j] = this.tracks[minLocation];
+                this.tracks[minLocation] = temp;
+            }
+        }
     }
 }
